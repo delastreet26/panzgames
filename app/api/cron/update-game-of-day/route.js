@@ -42,21 +42,21 @@ async function fetchIGDBData(igdbId) {
 
 async function generateCuriosities(game, igdbData) {
   try {
-    const prompt = `Eres un experto en videojuegos escribiendo para una web española de gaming llamada PanZGames.
+    const prompt = `You are a video game expert writing for an Australian gaming website called PanZGames.
 
-Genera 4 curiosidades interesantes, sorprendentes o poco conocidas sobre el videojuego "${game.title}" (${game.platform}, ${game.year}).
-${igdbData?.summary ? `Descripción oficial: ${igdbData.summary}` : ""}
-${game.developer ? `Desarrollador: ${game.developer}` : ""}
+Generate 4 interesting, surprising, or little-known facts about the video game "${game.title}" (${game.platform}, ${game.year}).
+${igdbData?.summary ? `Official description: ${igdbData.summary}` : ""}
+${game.developer ? `Developer: ${game.developer}` : ""}
 
-Requisitos:
-- Cada curiosidad debe ser un hecho REAL y verificable
-- Máximo 2 frases por curiosidad
-- Tono dinámico y emocionante, como si hablaras con un amigo gamer
-- En español
-- Variedad: desarrollo del juego, records, datos de ventas, mecánicas únicas, anécdotas de creación
+Requirements:
+- Each fact must be REAL and verifiable
+- Maximum 2 sentences per fact
+- Dynamic and exciting tone, like chatting with a fellow gamer
+- In English
+- Variety: game development, records, sales figures, unique mechanics, behind-the-scenes stories
 
-Responde SOLO con un JSON válido así (sin markdown, sin texto extra):
-{"curiosities": ["curiosidad 1", "curiosidad 2", "curiosidad 3", "curiosidad 4"], "short_description": "descripción de 2-3 frases del juego en español"}`;
+Respond ONLY with valid JSON like this (no markdown, no extra text):
+{"curiosities": ["fact 1", "fact 2", "fact 3", "fact 4"], "short_description": "2-3 sentence description of the game in English"}`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
@@ -69,8 +69,8 @@ Responde SOLO con un JSON válido así (sin markdown, sin texto extra):
   } catch (err) {
     console.error("Error generando curiosidades:", err.message);
     return {
-      curiosities: game.curiosities || ["Información no disponible temporalmente."],
-      short_description: igdbData?.summary || "Un clásico que merece estar en tu colección.",
+      curiosities: game.curiosities || ["Information temporarily unavailable."],
+      short_description: igdbData?.summary || "A classic that deserves a spot in your collection.",
     };
   }
 }
@@ -91,7 +91,7 @@ async function upsertGameToDB(game) {
       igdb_id: game.igdb_id || null,
       metacritic_score: game.metacritic || null,
       ebay_search_url: game.ebay_url || null,
-      wallapop_search_url: game.wallapop_url || null,
+      gumtree_search_url: game.gumtree_url || null,
     }, { onConflict: "slug" })
     .select("id")
     .single();
