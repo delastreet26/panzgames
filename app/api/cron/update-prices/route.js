@@ -1,13 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 const ITAD_BASE = "https://api.isthereanydeal.com";
-const ITAD_KEY = process.env.ITAD_API_KEY;
 
 const STORE_MAP = {
   steam: "Steam",
@@ -98,6 +92,12 @@ export async function GET(request) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  const ITAD_KEY = process.env.ITAD_API_KEY;
 
   try {
     const { data: games, error } = await supabase

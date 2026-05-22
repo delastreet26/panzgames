@@ -1,14 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
 import Anthropic from "@anthropic-ai/sdk";
-import { GAME_OF_DAY_POOL, getGameOfDayByDate } from "@/scripts/games-catalog.js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+import { getGameOfDayByDate } from "@/scripts/games-catalog.js";
 
 let igdbToken = null;
 async function getIGDBToken() {
@@ -112,6 +105,12 @@ export async function GET(request) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
   }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
