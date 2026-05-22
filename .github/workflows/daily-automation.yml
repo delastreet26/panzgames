@@ -1,0 +1,32 @@
+name: Automatización Diaria PanZGames
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+    - cron: "5 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-prices:
+    name: Actualizar Precios
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 6 * * *' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Llamar endpoint de actualización de precios
+        run: |
+          curl -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -f \
+            "${{ secrets.VERCEL_APP_URL }}/api/cron/update-prices"
+
+  update-game-of-day:
+    name: Actualizar Juego del Día
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '5 0 * * *' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Llamar endpoint del juego del día
+        run: |
+          curl -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -f \
+            "${{ secrets.VERCEL_APP_URL }}/api/cron/update-game-of-day"
