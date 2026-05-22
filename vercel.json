@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/update-game-of-day",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/generate-riddle",
+      "schedule": "0 1 * * *"
     }
   ]
 }

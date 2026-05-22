@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import DailyRiddle from "./DailyRiddle";
+import MiniGame from "./MiniGame";
 
 const MODERN_GAMES = [
   { id: 1, title: "Elden Ring", platform: "PC", genre: "RPG", year: 2022, metacritic: 96, rating: 9.4, cover: "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg", prices: [
@@ -112,6 +114,13 @@ export default function PanZGames() {
     setComment("");
   };
 
+  useEffect(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem("pzg_progress") || "{}");
+      if (p.active) document.documentElement.setAttribute("data-skin", p.active);
+    } catch {}
+  }, []);
+
   const today = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
   const best = getBest(selGame?.prices || []);
 
@@ -120,7 +129,7 @@ export default function PanZGames() {
       <nav className="nav">
         <div className="logo"><div className="dot" />PanZ<em>Games</em></div>
         <div className="nav-links">
-          {[["games", "🎮 PC Games"], ["retro", "🕹️ Retro"], ["peripherals", "🖱️ Peripherals"], ["builds", "🖥️ PC Builds"]].map(([id, label]) => (
+          {[["games", "🎮 PC Games"], ["retro", "🕹️ Retro"], ["peripherals", "🖱️ Peripherals"], ["builds", "🖥️ PC Builds"], ["riddle", "🧩 Riddle"], ["play", "🎯 Play"]].map(([id, label]) => (
             <button key={id} className={`nb${tab === id ? " on" : ""}`} onClick={() => { setTab(id); setSelGame(null); }}>{label}</button>
           ))}
         </div>
@@ -155,7 +164,7 @@ export default function PanZGames() {
                       <span className="bdg bdg-m">Metacritic: {selGame.metacritic}</span>
                     </div>
                     <div className="cp-sub">
-                      Best price: <strong style={{ color: "#00c2a8", fontFamily: "Rajdhani,sans-serif", fontSize: "1.05rem" }}>{best?.currency}{best?.price?.toFixed(2)}</strong>
+                      Best price: <strong style={{ color: "var(--a)", fontFamily: "Rajdhani,sans-serif", fontSize: "1.05rem" }}>{best?.currency}{best?.price?.toFixed(2)}</strong>
                       {best?.store && <span style={{ marginLeft: 8, color: "#94a3b8", fontSize: ".8rem" }}>at {best.store}</span>}
                     </div>
                   </div>
@@ -345,6 +354,26 @@ export default function PanZGames() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {tab === "riddle" && (
+        <div className="sec" style={{ paddingTop: "1.5rem" }}>
+          <div className="sec-h"><div className="sec-t">🧩 Daily Gaming Riddle</div><div className="sec-l" /></div>
+          <p style={{ color: "#475569", fontSize: ".85rem", marginBottom: "1.25rem", fontFamily: "DM Sans,sans-serif" }}>
+            A fresh original riddle every day. Solve it to earn 🪙 coins — spend them in the 🎯 Play tab to unlock interface skins.
+          </p>
+          <DailyRiddle />
+        </div>
+      )}
+
+      {tab === "play" && (
+        <div className="sec" style={{ paddingTop: "1.5rem" }}>
+          <div className="sec-h"><div className="sec-t">🎯 Emoji Quiz</div><div className="sec-l" /></div>
+          <p style={{ color: "#475569", fontSize: ".85rem", marginBottom: "1.25rem", fontFamily: "DM Sans,sans-serif" }}>
+            Guess the game from 4 emoji clues. Earn coins on correct answers and spend them in the Skin Shop to customise the site.
+          </p>
+          <MiniGame />
         </div>
       )}
 
